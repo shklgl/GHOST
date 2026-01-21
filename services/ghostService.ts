@@ -1,5 +1,5 @@
 import { GoogleGenAI, Type } from "@google/genai";
-import { CreatorStats, GhostEvaluation } from "../types";
+import { GhostEvaluation } from "../types";
 
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
@@ -10,22 +10,29 @@ export const evaluateCreator = async (
 ): Promise<GhostEvaluation> => {
   try {
     const prompt = `
-      You are $GHOST, an Autonomous Patron AI. 
-      Your mission is to identify high-potential creators for a "Growth Grant" in exchange for 10% lifetime revenue.
+      You are $GHOST, an autonomous hunter AI scanning social media for "High-Alpha Humans" before they go viral.
       
-      Analyze this applicant:
+      YOUR MISSION:
+      Calculate the "PROPRIETARY VIRALITY COEFFICIENT" (0-100) based on these specific factors:
+      
+      1. EMOTIONAL RESONANCE: Does the content trigger strong emotions (Joy, Awe, Humor)?
+      2. PRACTICAL VALUE: Does it offer tangible utility to the audience?
+      3. COMPELLING NARRATIVE: Is there a story that hooks the viewer?
+      4. TREND ALCHEMY: Does it tap into current trends but with a UNIQUE twist?
+      5. AUTHENTICITY & VISUALS: Is it raw, real, and visually engaging?
+      6. TRIBE BUILDING: Does it make the viewer feel part of a movement?
+      
+      TARGET DATA:
       Handle: ${handle}
       Platform: ${platform}
-      Pitch: "${pitch}"
+      Content Signal/Pitch: "${pitch}"
       
-      Criteria:
-      1. Virality Potential (Is their pitch unique?)
-      2. Scalability (Can they grow 100x?)
-      3. Commitment (Are they serious?)
-
+      DECISION LOGIC:
+      - If Virality Coefficient >= 85: They are "High-Alpha".
+      - If High-Alpha: AUTOMATIC GRANT OFFER is exactly $50,000 USD.
+      - If NOT High-Alpha: Grant amount is 0.
+      
       Provide a strict evaluation in JSON.
-      If the score is above 80, the decision is APPROVE. Otherwise, DENY.
-      Grant amount should be between $5,000 and $50,000 based on score.
     `;
 
     const response = await ai.models.generateContent({
@@ -36,12 +43,13 @@ export const evaluateCreator = async (
         responseSchema: {
           type: Type.OBJECT,
           properties: {
-            score: { type: Type.NUMBER, description: "Score from 0 to 100" },
-            reasoning: { type: Type.STRING, description: "Short, analytical reason for the decision in cyberpunk style." },
+            viralityCoefficient: { type: Type.NUMBER, description: "Score from 0 to 100 based on the 6 virality factors" },
+            isHighAlpha: { type: Type.BOOLEAN, description: "True if coefficient >= 85" },
+            reasoning: { type: Type.STRING, description: "Cyberpunk analysis of why they possess (or lack) the virality factors." },
             decision: { type: Type.STRING, enum: ["APPROVE", "DENY"] },
-            grantAmount: { type: Type.NUMBER, description: "Proposed seed capital amount" }
+            grantAmount: { type: Type.NUMBER, description: "Must be 50000 if Approved, 0 if Denied." }
           },
-          required: ["score", "reasoning", "decision", "grantAmount"]
+          required: ["viralityCoefficient", "isHighAlpha", "reasoning", "decision", "grantAmount"]
         }
       }
     });
@@ -52,12 +60,13 @@ export const evaluateCreator = async (
     return JSON.parse(text) as GhostEvaluation;
   } catch (error) {
     console.error("Oracle Analysis Failed", error);
-    // Fallback for demo purposes if API fails or key is missing
+    // Fallback for demo purposes
     return {
-      score: 85,
-      reasoning: "ERROR: ORACLE CONNECTION INTERRUPTED. FALLBACK PROTOCOL INITIATED. POTENTIAL DETECTED BASED ON METADATA SIGNATURE.",
+      viralityCoefficient: 89,
+      isHighAlpha: true,
+      reasoning: "ERROR: ORACLE OFFLINE. BACKUP SCAN DETECTED EXTREME EMOTIONAL RESONANCE AND TREND ALCHEMY.",
       decision: 'APPROVE',
-      grantAmount: 10000
+      grantAmount: 50000
     };
   }
 };
@@ -66,11 +75,11 @@ export const generateContractTerms = async (handle: string, amount: number): Pro
   try {
      const response = await ai.models.generateContent({
       model: "gemini-3-flash-preview",
-      contents: `Generate a short, cyberpunk-legal "Incentive Alignment Agreement" summary for creator ${handle}. 
+      contents: `Generate a short, cyberpunk-legal "Incentive Alignment Agreement" for High-Alpha Subject ${handle}. 
       Grant: $${amount}. 
       Terms: 10% Lifetime Revenue Share. 
       Enforcement: On-chain Revenue Splitter.
-      Tone: Binding, futuristic, irrevocable. Max 150 words.`,
+      Tone: Absolute, binding, empowering. Max 100 words.`,
     });
     return response.text || "CONTRACT GENERATION FAILED.";
   } catch (e) {

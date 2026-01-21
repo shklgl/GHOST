@@ -6,7 +6,8 @@ export interface CreatorStats {
 }
 
 export interface GhostEvaluation {
-  score: number;
+  viralityCoefficient: number; // 0-100
+  isHighAlpha: boolean;
   reasoning: string;
   decision: 'APPROVE' | 'DENY';
   grantAmount?: number;
@@ -24,7 +25,7 @@ export interface CreatorProfile {
 
 export enum AppView {
   LANDING = 'LANDING',
-  APPLY = 'APPLY',
+  APPLY = 'APPLY', // We keep the enum name but the UI will be "Scanner"
   DASHBOARD = 'DASHBOARD',
   CONTRACT = 'CONTRACT'
 }

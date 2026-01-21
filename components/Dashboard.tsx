@@ -13,10 +13,10 @@ const mockChartData = [
 ];
 
 const mockHoldings = [
-  { handle: '@neura_art', platform: 'X', share: '10%', revenue: '$12,450', status: 'ACTIVE' },
-  { handle: '@code_witch', platform: 'GitHub', share: '10%', revenue: '$8,230', status: 'ACTIVE' },
-  { handle: '@synth_pop', platform: 'Spotify', share: '10%', revenue: '$4,100', status: 'ACTIVE' },
-  { handle: '@meta_kai', platform: 'YouTube', share: '10%', revenue: '$156,000', status: 'ACTIVE' },
+  { handle: '@neura_art', platform: 'X', share: '10%', revenue: '$12,450', status: 'HIGH-ALPHA' },
+  { handle: '@code_witch', platform: 'GitHub', share: '10%', revenue: '$8,230', status: 'HIGH-ALPHA' },
+  { handle: '@synth_pop', platform: 'Spotify', share: '10%', revenue: '$4,100', status: 'GROWTH' },
+  { handle: '@meta_kai', platform: 'YouTube', share: '10%', revenue: '$156,000', status: 'BLUE-CHIP' },
 ];
 
 const Dashboard: React.FC = () => {
@@ -25,7 +25,7 @@ const Dashboard: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {[
           { label: 'Treasury Value', value: '$4,231,090', icon: TrendingUp, color: 'text-green-400' },
-          { label: 'Active Grants', value: '142', icon: Users, color: 'text-blue-400' },
+          { label: 'Alpha Assets', value: '142', icon: Users, color: 'text-blue-400' },
           { label: 'Total Burned', value: '890,402 $GST', icon: Flame, color: 'text-orange-500' },
           { label: 'Network APY', value: '18.4%', icon: Activity, color: 'text-purple-400' },
         ].map((stat, i) => (
@@ -90,7 +90,7 @@ const Dashboard: React.FC = () => {
                 </div>
                 <div className="text-right">
                   <div className="text-green-400 font-mono text-sm">+{h.revenue}</div>
-                  <div className="text-xs text-zinc-600">LTV Split</div>
+                  <div className="text-xs text-zinc-600">{h.status}</div>
                 </div>
               </div>
             ))}
